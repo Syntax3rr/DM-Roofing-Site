@@ -1,0 +1,195 @@
+/* ============================================================
+   DM Roofing & Siding — global stylesheet
+   Tailwind 4 entry + design tokens + self-hosted fonts.
+   Colors are defined ONCE here as CSS variables. Components must
+   only use token utilities (bg-primary, text-dark, ...) — never
+   hard-coded hex values.
+   ============================================================ */
+
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+/* Self-hosted Google Fonts (via @fontsource) — no runtime request
+   to Google servers. */
+@import '@fontsource/archivo/400.css';
+@import '@fontsource/archivo/500.css';
+@import '@fontsource/archivo/600.css';
+@import '@fontsource/archivo/700.css';
+@import '@fontsource/archivo/800.css';
+
+/* ------------------------------------------------------------
+   Color scheme (default) — "DM Maroon & Gold", taken from the logo
+   (maroon #7E0000, gold #FFD800).
+   ------------------------------------------------------------ */
+:root {
+  --rl-primary: #ffd800; /* logo gold — CTA surfaces + accents on maroon */
+  --rl-primary-bright: #ffe24d; /* CTA hover */
+  --rl-primary-ink: #7e0000; /* maroon TEXT/icons on light backgrounds (AA 11:1) */
+  --rl-on-primary: #7e0000; /* maroon ink on gold buttons (AA 13:1) */
+  --rl-dark: #7e0000; /* logo maroon — header bar/footer/dark sections */
+  --rl-dark-soft: #961010; /* cards on dark sections */
+  --rl-dark-deep: #3a0000; /* photo overlays (keeps hero images from washing pink) */
+  --rl-surface: #faf7f2; /* warm light section background */
+  --rl-accent: #ffd800; /* decorative accent on dark backgrounds */
+  --rl-accent-ink: #7e0000; /* links on light backgrounds */
+  --rl-focus: #1d8cf0; /* focus ring: 3:1+ on both white and maroon */
+}
+
+/* ------------------------------------------------------------
+   Color scheme B — "Deep Blue & Amber"
+   Switch by setting `theme: 'blue-amber'` in src/config/site.ts
+   (adds data-theme="blue-amber" to <html>).
+   ------------------------------------------------------------ */
+:root[data-theme='blue-amber'] {
+  --rl-primary: #d97706;
+  --rl-primary-bright: #f59e0b;
+  --rl-primary-ink: #b45309;
+  --rl-on-primary: #0f172a;
+  --rl-dark: #1e3a5f;
+  --rl-dark-soft: #2c4a72;
+  --rl-dark-deep: #1e3a5f;
+  --rl-surface: #f8fafc;
+  --rl-accent: #0ea5e9;
+  --rl-accent-ink: #0369a1;
+  --rl-focus: #0369a1;
+}
+
+/* Map the runtime CSS variables to Tailwind theme tokens so that
+   utilities like bg-primary / text-dark follow the active theme. */
+@theme inline {
+  --color-primary: var(--rl-primary);
+  --color-primary-bright: var(--rl-primary-bright);
+  --color-primary-ink: var(--rl-primary-ink);
+  --color-on-primary: var(--rl-on-primary);
+  --color-dark: var(--rl-dark);
+  --color-dark-soft: var(--rl-dark-soft);
+  --color-dark-deep: var(--rl-dark-deep);
+  --color-surface: var(--rl-surface);
+  --color-accent: var(--rl-accent);
+  --color-accent-ink: var(--rl-accent-ink);
+  --font-heading: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    @apply font-sans text-stone-700 antialiased;
+    scroll-behavior: smooth;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading font-extrabold tracking-tight text-balance;
+  }
+
+  /* Visible focus ring for keyboard users (WCAG 2.4.7).
+     --rl-focus meets 3:1 non-text contrast on light AND dark surfaces. */
+  :focus-visible {
+    outline: 3px solid var(--rl-focus);
+    outline-offset: 2px;
+  }
+
+  /* Respect users who prefer reduced motion (WCAG 2.3.3). */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ------------------------------------------------------------
+   Buttons — the main action is gold with maroon text and a soft
+   shadow, so it stands out on both white and maroon. Secondary
+   buttons are outlines.
+   ------------------------------------------------------------ */
+@layer components {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    border: 2px solid transparent;
+    border-radius: 0.375rem;
+    padding: 0.625rem 1.25rem;
+    font-weight: 700;
+    line-height: 1.25;
+    transition:
+      background-color 150ms,
+      border-color 150ms,
+      color 150ms,
+      box-shadow 150ms,
+      transform 150ms;
+  }
+  .btn-lg {
+    padding: 0.875rem 1.75rem;
+    font-size: 1.125rem;
+  }
+  .btn-block {
+    width: 100%;
+  }
+
+  /* Main action. Same on light and maroon backgrounds; the second
+     class name is kept so templates can say which one they're on. */
+  .btn-primary,
+  .btn-primary-on-dark {
+    background-color: var(--rl-primary);
+    border-color: var(--rl-primary);
+    color: var(--rl-on-primary);
+    box-shadow:
+      0 1px 0 rgb(0 0 0 / 0.08),
+      0 8px 20px -8px rgb(0 0 0 / 0.45);
+  }
+  .btn-primary:hover,
+  .btn-primary-on-dark:hover {
+    background-color: var(--rl-primary-bright);
+    border-color: var(--rl-primary-bright);
+    transform: translateY(-1px);
+    box-shadow:
+      0 1px 0 rgb(0 0 0 / 0.08),
+      0 12px 24px -8px rgb(0 0 0 / 0.5);
+  }
+  .btn-primary:active,
+  .btn-primary-on-dark:active {
+    transform: translateY(0);
+  }
+
+  .btn-outline {
+    border-color: var(--rl-dark);
+    color: var(--rl-dark);
+  }
+  .btn-outline:hover {
+    background-color: var(--rl-dark);
+    color: #fff;
+  }
+
+  .btn-outline-light {
+    border-color: rgb(255 255 255 / 0.7);
+    color: #fff;
+  }
+  .btn-outline-light:hover {
+    border-color: #fff;
+    background-color: rgb(255 255 255 / 0.1);
+  }
+}
+
+@layer utilities {
+  /* Skip-to-content link: hidden until focused. */
+  .skip-link {
+    @apply sr-only;
+  }
+  .skip-link:focus {
+    @apply not-sr-only fixed left-4 top-4 z-[100] rounded-md bg-dark px-4 py-3 font-semibold text-white;
+  }
+}

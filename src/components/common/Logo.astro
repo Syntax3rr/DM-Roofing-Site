@@ -1,0 +1,39 @@
+---
+/**
+ * Logo lock-up: DM mark + "Roofing & Siding" wordmark.
+ * Light backgrounds use the original maroon-outlined mark; dark
+ * (maroon) backgrounds use the white-outlined variant so the mark
+ * doesn't blend into the background.
+ */
+import { Image } from 'astro:assets';
+import { siteConfig } from '../../config/site';
+import markOnLight from '../../assets/brand/dm-mark.png';
+import markOnDark from '../../assets/brand/dm-mark-light.png';
+
+interface Props {
+  /** Set true when rendering on a dark background (footer). */
+  onDark?: boolean;
+}
+
+const { onDark = false } = Astro.props;
+---
+
+<span class="flex items-center gap-3">
+  <Image
+    src={onDark ? markOnDark : markOnLight}
+    alt=""
+    height={44}
+    widths={[96, 192]}
+    sizes="96px"
+    loading="eager"
+    class="h-11 w-auto"
+  />
+  <span
+    class:list={[
+      'hidden text-lg font-extrabold leading-none tracking-tight sm:inline sm:text-xl',
+      onDark ? 'text-white' : 'text-dark',
+    ]}
+  >
+    {siteConfig.logoText}
+  </span>
+</span>

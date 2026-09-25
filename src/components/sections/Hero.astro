@@ -1,0 +1,54 @@
+---
+/**
+ * Home hero: maroon band with the pitch on the left and the free-estimate
+ * form on the right, so visitors can ask for a price without leaving
+ * the first screen.
+ */
+import { siteConfig } from '../../config/site';
+import EstimateForm from '../forms/EstimateForm.astro';
+import Icon from '../common/Icon.astro';
+
+const facts = [
+  'Free, no-obligation estimates',
+  `${siteConfig.stats.warrantyYears}-year guarantee on all labour`,
+  'Fully insured',
+  `Locally owned since ${siteConfig.stats.yearFounded}`,
+];
+---
+
+<section class="relative overflow-hidden bg-dark text-white">
+  <!-- Gold roofline stripe along the bottom edge -->
+  <div class="absolute inset-x-0 bottom-0 h-2 bg-primary" aria-hidden="true"></div>
+
+  <div class="relative mx-auto grid max-w-6xl gap-10 px-4 pb-16 pt-12 sm:px-6 md:pt-16 lg:grid-cols-[1.1fr_1fr] lg:items-start lg:gap-14 lg:px-8 lg:pb-20">
+    <div class="lg:pt-6">
+      <p class="font-semibold text-primary">
+        {siteConfig.serviceArea.towns.join(' · ')} · and area
+      </p>
+      <h1 class="mt-3 font-heading text-4xl leading-[1.08] sm:text-5xl lg:text-[3.5rem]">
+        New windows, doors, and exterior trim, installed right.
+      </h1>
+      <p class="mt-6 max-w-xl text-lg leading-relaxed text-white/85">
+        We replace windows, doors, and siding, and handle everything along
+        your roofline: soffit, fascia, eavestroughs, and gutter guard. Tell us about
+        your project and we'll come by with a free estimate.
+      </p>
+      <ul class="mt-8 grid gap-3 sm:grid-cols-2">
+        {
+          facts.map((fact) => (
+            <li class="flex items-start gap-2.5 text-white/90">
+              <Icon name="check" class="mt-0.5 h-5 w-5 shrink-0 text-primary" strokeWidth={3} />
+              {fact}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div id="estimate" class="scroll-mt-28 rounded-sm bg-white p-6 text-stone-700 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.5)] sm:p-8">
+      <h2 class="text-2xl font-extrabold text-dark">Get a free estimate</h2>
+      <p class="mt-1 mb-5 text-sm text-stone-600">Takes about a minute.</p>
+      <EstimateForm formName="home estimate" idPrefix="h" compact />
+    </div>
+  </div>
+</section>

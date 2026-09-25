@@ -1,0 +1,239 @@
+---
+/**
+ * Free-estimate request form, used in the home hero and on /quote/.
+ *
+ *  - compact: fewer fields (no address) for the home hero.
+ *  - The service dropdown is preselected from ?service=<title> so links
+ *    like "Get an estimate for windows" land with it already chosen.
+ *  - The address field suggests Canadian addresses via Geoapify once a
+ *    key is set in site config; without one it's a plain text box.
+ */
+import { getCollection } from 'astro:content';
+import FormBackendFields from '../common/FormBackendFields.astro';
+import Icon from '../common/Icon.astro';
+import { formAttributes } from '../../lib/forms';
+import { siteConfig } from '../../config/site';
+
+interface Props {
+  formName: string;
+  /** Prefix for input ids, so two forms never share ids. */
+  idPrefix: string;
+  compact?: boolean;
+}
+
+const { formName, idPrefix, compact = false } = Astro.props;
+
+const services = (await getCollection('services')).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+const id = (name: string) => `${idPrefix}-${name}`;
+const labelClass = 'mb-1.5 block text-sm font-semibold text-dark';
+const inputClass =
+  'w-full rounded-sm border border-stone-300 bg-white px-3.5 py-2.5 text-dark placeholder:text-stone-400 focus:border-primary-ink focus:outline-none focus:ring-2 focus:ring-primary-ink/25';
+const req = '<span class="text-primary-ink" aria-hidden="true">*</span>';
+const geoapifyKey = siteConfig.geoapifyKey.startsWith('YOUR_') ? '' : siteConfig.geoapifyKey;
+---
+
+<form {...formAttributes(formName)} class="grid gap-4 sm:grid-cols-2" data-estimate-form>
+  <FormBackendFields formName={formName} />
+
+  <div class="sm:col-span-2">
+    <label for={id('service')} class={labelClass}>What can we help with? <Fragment set:html={req} /></label>
+    <select id={id('service')} name="service" required class={inputClass} data-service-select>
+      <option value="">Choose a service…</option>
+      {services.map((s) => <option value={s.data.title}>{s.data.title}</option>)}
+      <option value="Not sure">Not sure yet</option>
+      <option value="Other question">Something else / a question</option>
+    </select>
+  </div>
+
+  <div>
+    <label for={id('name')} class={labelClass}>Name <Fragment set:html={req} /></label>
+    <input id={id('name')} name="name" type="text" required autocomplete="name" class={inputClass} />
+  </div>
+  <div>
+    <label for={id('phone')} class={labelClass}>Phone <Fragment set:html={req} /></label>
+    <input id={id('phone')} name="phone" type="tel" required autocomplete="tel" class={inputClass} />
+  </div>
+  <div class:list={[compact && 'sm:col-span-2']}>
+    <label for={id('email')} class={labelClass}>Email <Fragment set:html={req} /></label>
+    <input id={id('email')} name="email" type="email" required autocomplete="email" class={inputClass} />
+  </div>
+  {
+    !compact && (
+      <div data-address-field data-geoapify-key={geoapifyKey}>
+        <label for={id('address')} class={labelClass}>Property address <Fragment set:html={req} /></label>
+        <div class="relative">
+        <input
+          id={id('address')}
+          name="address"
+          type="text"
+          required
+          autocomplete="street-address"
+          class={inputClass}
+          role="combobox"
+          aria-autocomplete="list"
+          aria-expanded="false"
+          aria-controls={id('address-list')}
+        />
+        <ul
+          id={id('address-list')}
+          role="listbox"
+          class="absolute inset-x-0 top-full z-20 mt-1 hidden max-h-72 overflow-auto rounded-md border border-stone-300 bg-white py-1 shadow-lg"
+        ></ul>
+        </div>
+        {geoapifyKey && (
+          <p class="mt-1 text-xs text-stone-400">
+            Address search by <a href="https://www.geoapify.com/" class="underline">Geoapify</a> ·
+            © <a href="https://www.openstreetmap.org/copyright" class="underline">OpenStreetMap</a> contributors
+          </p>
+        )}
+      </div>
+    )
+  }
+  <div class="sm:col-span-2">
+    <label for={id('notes')} class={labelClass}>
+      Tell us about the job <span class="font-normal text-stone-500">(optional)</span>
+    </label>
+    <textarea
+      id={id('notes')}
+      name="notes"
+      rows={compact ? 3 : 5}
+      placeholder="How many windows, which doors, timing, anything else…"
+      class={inputClass}></textarea>
+  </div>
+
+  <div class="sm:col-span-2">
+    <button
+      type="submit"
+      class="btn btn-primary btn-lg btn-block"
+    >
+      Get my free estimate
+      <Icon name="arrow-right" class="h-5 w-5" />
+    </button>
+    <p class="mt-3 text-center text-sm text-stone-500">
+      Free and no obligation. We'll get back to you to set up a time.
+    </p>
+  </div>
+</form>
+
+<script>
+  // ---- Address autocomplete (Geoapify) ------------------------------
+  // Canada only, ranked toward Niagara Falls. Debounced so typing an
+  // address costs a handful of lookups, not one per keystroke.
+  const NIAGARA = '-79.0849,43.0896';
+
+  type Suggestion = { formatted: string };
+
+  document.querySelectorAll<HTMLElement>('[data-address-field]').forEach((field) => {
+    const key = field.dataset.geoapifyKey;
+    const input = field.querySelector('input');
+    const list = field.querySelector('ul');
+    if (!key || !input || !list) return;
+
+    let results: Suggestion[] = [];
+    let active = -1;
+    let timer: number | undefined;
+    let controller: AbortController | undefined;
+
+    const close = () => {
+      list.classList.add('hidden');
+      input.setAttribute('aria-expanded', 'false');
+      input.removeAttribute('aria-activedescendant');
+      active = -1;
+    };
+
+    const choose = (i: number) => {
+      input.value = results[i].formatted;
+      close();
+    };
+
+    const render = () => {
+      list.replaceChildren(
+        ...results.map((r, i) => {
+          const li = document.createElement('li');
+          li.id = `${list.id}-${i}`;
+          li.setAttribute('role', 'option');
+          li.setAttribute('aria-selected', String(i === active));
+          li.className = `cursor-pointer px-3.5 py-2 text-sm ${i === active ? 'bg-surface text-dark' : 'text-stone-700'} hover:bg-surface`;
+          li.textContent = r.formatted;
+          // mousedown fires before the input's blur, so the pick isn't lost.
+          li.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            choose(i);
+          });
+          return li;
+        }),
+      );
+      const open = results.length > 0;
+      list.classList.toggle('hidden', !open);
+      input.setAttribute('aria-expanded', String(open));
+      if (active >= 0) input.setAttribute('aria-activedescendant', `${list.id}-${active}`);
+      else input.removeAttribute('aria-activedescendant');
+    };
+
+    const search = async (text: string) => {
+      controller?.abort();
+      controller = new AbortController();
+      const params = new URLSearchParams({
+        text,
+        filter: 'countrycode:ca',
+        bias: `proximity:${NIAGARA}`,
+        format: 'json',
+        limit: '5',
+        lang: 'en',
+        apiKey: key,
+      });
+      try {
+        const res = await fetch(`https://api.geoapify.com/v1/geocode/autocomplete?${params}`, {
+          signal: controller.signal,
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        results = (data.results ?? []).map((r: Suggestion) => ({ formatted: r.formatted }));
+        active = -1;
+        render();
+      } catch {
+        // Aborted or offline: leave the field as a plain text box.
+      }
+    };
+
+    input.addEventListener('input', () => {
+      window.clearTimeout(timer);
+      const text = input.value.trim();
+      if (text.length < 3) {
+        results = [];
+        close();
+        return;
+      }
+      timer = window.setTimeout(() => search(text), 300);
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (list.classList.contains('hidden')) return;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        const step = e.key === 'ArrowDown' ? 1 : -1;
+        active = (active + step + results.length) % results.length;
+        render();
+      } else if (e.key === 'Enter' && active >= 0) {
+        e.preventDefault();
+        choose(active);
+      } else if (e.key === 'Escape') {
+        close();
+      }
+    });
+
+    input.addEventListener('blur', close);
+  });
+
+  // ---- Service preselect from ?service= ---------------------------
+  const wanted = new URLSearchParams(window.location.search).get('service');
+  if (wanted) {
+    document.querySelectorAll<HTMLSelectElement>('[data-service-select]').forEach((select) => {
+      const match = [...select.options].find((o) => o.value.toLowerCase() === wanted.toLowerCase());
+      if (match) select.value = match.value;
+    });
+  }
+</script>

@@ -1,0 +1,36 @@
+---
+/**
+ * Link styled as a button. All link-buttons use this component; form
+ * submit buttons use the same .btn classes from global.css.
+ *
+ * Variants:
+ *  - primary          — gold with maroon outline (light backgrounds)
+ *  - primary-on-dark  — gold with white outline (maroon backgrounds)
+ *  - outline          — maroon outline, fills on hover
+ *  - outline-light    — white outline, for maroon backgrounds
+ */
+interface Props {
+  href: string;
+  variant?: 'primary' | 'primary-on-dark' | 'outline' | 'outline-light';
+  size?: 'md' | 'lg';
+  class?: string;
+  /** Accessible label when the visible text needs more context. */
+  ariaLabel?: string;
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  class: className = '',
+  ariaLabel,
+} = Astro.props;
+---
+
+<a
+  href={href}
+  aria-label={ariaLabel}
+  class:list={['btn', `btn-${variant}`, size === 'lg' && 'btn-lg', className]}
+>
+  <slot />
+</a>

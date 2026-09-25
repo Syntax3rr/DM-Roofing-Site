@@ -1,0 +1,77 @@
+---
+/**
+ * About page: the company story and what to expect.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/common/PageHero.astro';
+import FinalCTA from '../components/sections/FinalCTA.astro';
+import { siteConfig } from '../config/site';
+
+const basics = [
+  {
+    title: 'Locally owned',
+    text: `We live and work in Niagara, and we've been doing this here since ${siteConfig.stats.yearFounded}.`,
+  },
+  {
+    title: 'Fully insured',
+    text: 'Every job is covered. We also take emergency calls.',
+  },
+  {
+    title: `${siteConfig.stats.warrantyYears}-year labour guarantee`,
+    text: 'If there’s a problem with our workmanship in that time, call us and we’ll fix it.',
+  },
+  {
+    title: 'Clean job sites',
+    text: 'We clean up and haul everything away when the job is finished.',
+  },
+];
+---
+
+<BaseLayout
+  title="About Us"
+  description={`${siteConfig.name} is a locally owned company doing windows, doors, siding, soffit, fascia, eavestroughs, and roofing in Niagara Falls and St. Catharines since ${siteConfig.stats.yearFounded}.`}
+>
+  <PageHero
+    title="About DM"
+    lead={`A local Niagara company, working on homes here since ${siteConfig.stats.yearFounded}.`}
+    crumbs={[{ label: 'About' }]}
+  />
+
+  <section class="py-14 md:py-20">
+    <div class="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-[1.4fr_1fr] lg:px-8">
+      <div class="space-y-5 text-lg leading-relaxed text-stone-700">
+        <p>
+          Duke started {siteConfig.name} in {siteConfig.stats.yearFounded}. For
+          most of that time we were known mainly for roofs. These days a lot more
+          of our work is windows, doors, siding, soffit, fascia, and eavestroughs, but
+          it's the same crew and the same way of doing things.
+        </p>
+        <p>
+          We work in Niagara Falls, St. Catharines, and the towns around them.
+          When you call, you talk to Duke. He comes out, looks at the job, and
+          gives you a price. If something doesn't need replacing, he'll say so.
+        </p>
+        <p>
+          We're fully insured, and all of our labour is guaranteed for
+          {siteConfig.stats.warrantyYears} years.
+        </p>
+      </div>
+
+      <aside class="self-start border-t-4 border-dark bg-surface p-6">
+        <h2 class="text-lg font-bold text-dark">What to expect from us</h2>
+        <dl class="mt-4 divide-y divide-stone-200">
+          {
+            basics.map((item) => (
+              <div class="py-4 first:pt-0 last:pb-0">
+                <dt class="font-semibold text-dark">{item.title}</dt>
+                <dd class="mt-1 text-stone-600">{item.text}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <FinalCTA />
+</BaseLayout>

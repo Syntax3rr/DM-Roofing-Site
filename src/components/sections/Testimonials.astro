@@ -1,0 +1,45 @@
+---
+/**
+ * Testimonials: the first one as a large pull quote, the rest in two
+ * plain columns.
+ */
+import { getCollection } from 'astro:content';
+import SectionHeading from '../common/SectionHeading.astro';
+
+const [featured, ...rest] = await getCollection('reviews');
+---
+
+<section id="reviews" class="scroll-mt-20 py-16 md:py-24">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      title="What customers have said"
+      lead="A few notes we've received from homeowners over the years."
+    />
+
+    {
+      featured && (
+        <figure class="mt-10 border-l-4 border-primary pl-6 md:pl-8">
+          <blockquote class="max-w-3xl text-xl leading-relaxed text-dark md:text-2xl">
+            “{featured.data.text}”
+          </blockquote>
+          <figcaption class="mt-4 text-stone-600">
+            <span class="font-semibold text-dark">{featured.data.author}</span>, {featured.data.city}
+          </figcaption>
+        </figure>
+      )
+    }
+
+    <div class="mt-14 grid gap-x-12 gap-y-10 md:grid-cols-2">
+      {
+        rest.map((review) => (
+          <figure>
+            <blockquote class="leading-relaxed text-stone-700">“{review.data.text}”</blockquote>
+            <figcaption class="mt-3 text-sm text-stone-500">
+              <span class="font-semibold text-dark">{review.data.author}</span>, {review.data.city}
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+</section>

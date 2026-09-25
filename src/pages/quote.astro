@@ -1,0 +1,58 @@
+---
+/**
+ * Estimate request page.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/common/PageHero.astro';
+import EstimateForm from '../components/forms/EstimateForm.astro';
+import { siteConfig } from '../config/site';
+
+const steps = [
+  'We get back to you to set up a time.',
+  'We come to your house, have a look, and talk it over with you.',
+  'You get a free estimate. You don’t owe us anything.',
+  `If you go ahead, our labour is guaranteed for ${siteConfig.stats.warrantyYears} years.`,
+];
+---
+
+<BaseLayout
+  title="Get a Free Estimate"
+  description="Request a free, no-obligation estimate for windows, doors, siding, soffit, fascia, eavestroughs, gutter guard, or roofing in Niagara Falls, St. Catharines, and area."
+>
+  <PageHero
+    title="Get a free estimate"
+    lead="Fill this out and we'll be in touch to set up a time to come by."
+    crumbs={[{ label: 'Free estimate' }]}
+  />
+
+  <section class="bg-surface py-14 md:py-20">
+    <div class="mx-auto grid max-w-6xl items-start gap-10 px-4 sm:px-6 lg:grid-cols-[1.6fr_1fr] lg:px-8">
+      <div class="border-t-4 border-primary bg-white p-6 sm:p-8">
+        <EstimateForm formName="estimate" idPrefix="q" />
+      </div>
+
+      <aside class="lg:sticky lg:top-28">
+        <h2 class="text-lg font-bold text-dark">What happens next</h2>
+        <ol class="mt-4 space-y-4">
+          {
+            steps.map((step, i) => (
+              <li class="flex gap-4">
+                <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-dark text-sm font-bold text-primary">
+                  {i + 1}
+                </span>
+                <span class="pt-1 text-stone-700">{step}</span>
+              </li>
+            ))
+          }
+        </ol>
+        <p class="mt-8 border-t border-stone-200 pt-5 text-sm text-stone-600">
+          Just have a question? Pick “Something else” in the form, or email
+          <a href={`mailto:${siteConfig.email}`} class="font-semibold text-primary-ink hover:underline">{siteConfig.email}</a>.
+        </p>
+        <p class="mt-3 text-sm text-stone-600">
+          Something urgent? Call <a href={siteConfig.phoneHref} class="font-semibold text-primary-ink hover:underline">{siteConfig.phone}</a>.
+        </p>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>

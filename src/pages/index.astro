@@ -1,0 +1,113 @@
+---
+/**
+ * Home page: Hero (with estimate form) → Services → How it works →
+ * Why DM → Testimonials → FAQ → FinalCTA.
+ */
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/sections/Hero.astro';
+import ServiceTiles from '../components/sections/ServiceTiles.astro';
+import Testimonials from '../components/sections/Testimonials.astro';
+import Faq from '../components/sections/Faq.astro';
+import FinalCTA from '../components/sections/FinalCTA.astro';
+import SectionHeading from '../components/common/SectionHeading.astro';
+import Button from '../components/common/Button.astro';
+import { siteConfig } from '../config/site';
+
+const services = (await getCollection('services')).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+const steps = [
+  { title: 'Send a request', text: 'Fill out the form with a few details about the job.' },
+  { title: 'We come by', text: 'We set up a time, look at the job with you, and go over options.' },
+  { title: 'Free estimate', text: 'You get a price. No charge, and no obligation.' },
+  { title: 'We do the work', text: `We install, clean up, and guarantee our labour for ${siteConfig.stats.warrantyYears} years.` },
+];
+
+const reasons = [
+  {
+    title: 'You deal with the owner',
+    text: 'Duke owns the company and he’s who you’ll talk to. He answers questions straight and won’t try to up-sell you.',
+  },
+  {
+    title: `${siteConfig.stats.warrantyYears}-year labour guarantee`,
+    text: 'All of our labour is guaranteed for 10 years, on top of the manufacturer’s warranty on the products.',
+  },
+  {
+    title: 'Fully insured',
+    text: 'We carry full insurance on every job. We work year-round and take emergency calls.',
+  },
+  {
+    title: 'We clean up',
+    text: 'Old windows, trim, nails, and packaging all leave with us at the end of the job.',
+  },
+];
+---
+
+<BaseLayout
+  title={siteConfig.seo.defaultTitle}
+  description={siteConfig.seo.defaultDescription}
+>
+  <Hero />
+
+  <section class="bg-surface py-16 md:py-24">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <SectionHeading
+          title="What we do"
+          lead="Most of our work these days is windows, doors, and the trim around your roofline. We also do siding, and we still do roofing."
+        />
+        <Button href="/services/" variant="outline">All services</Button>
+      </div>
+      <div class="mt-10">
+        <ServiceTiles services={services} />
+      </div>
+    </div>
+  </section>
+
+  <section class="py-16 md:py-24">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <SectionHeading title="How it works" />
+      <ol class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          steps.map((step, i) => (
+            <li>
+              <span class="block text-5xl font-extrabold leading-none text-dark/25">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h3 class="mt-4 text-lg font-bold text-dark">{step.title}</h3>
+              <p class="mt-1.5 leading-relaxed text-stone-600">{step.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="mt-10">
+        <Button href="/quote/" size="lg">Start with step one</Button>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-stone-200 bg-surface py-16 md:py-24">
+    <div class="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.4fr] lg:px-8">
+      <SectionHeading
+        title="Why hire DM"
+        lead={`We've been working on homes in Niagara Falls, St. Catharines, and the surrounding area since ${siteConfig.stats.yearFounded}.`}
+      />
+      <dl class="grid gap-x-10 gap-y-8 sm:grid-cols-2">
+        {
+          reasons.map((reason) => (
+            <div class="border-t-2 border-dark pt-4">
+              <dt class="text-lg font-bold text-dark">{reason.title}</dt>
+              <dd class="mt-2 leading-relaxed text-stone-600">{reason.text}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <Testimonials />
+  <Faq />
+  <FinalCTA />
+</BaseLayout>

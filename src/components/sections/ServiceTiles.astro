@@ -1,0 +1,50 @@
+---
+/**
+ * Service tiles. Each links to its section on the services page and has
+ * a direct "get an estimate" link with the service preselected. A final
+ * tile points to the estimate form for anyone unsure.
+ */
+import type { CollectionEntry } from 'astro:content';
+import Icon from '../common/Icon.astro';
+
+interface Props {
+  services: CollectionEntry<'services'>[];
+}
+
+const { services } = Astro.props;
+---
+
+<ul class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+  {
+    services.map((service) => (
+      <li class="group flex flex-col border border-stone-200 border-t-4 border-t-dark bg-white p-6 transition-colors hover:border-t-primary">
+        <Icon name={service.data.icon} class="h-7 w-7 text-primary-ink" />
+        <h3 class="mt-4 text-xl font-bold text-dark">
+          <a href={`/services/#${service.id}`} class="hover:underline">{service.data.title}</a>
+        </h3>
+        <p class="mt-2 flex-1 leading-relaxed text-stone-600">{service.data.excerpt}</p>
+        <a
+          href={`/quote/?service=${encodeURIComponent(service.data.title)}`}
+          class="mt-5 inline-flex items-center gap-1.5 font-semibold text-primary-ink hover:text-dark"
+        >
+          Get an estimate
+          <Icon name="arrow-right" class="h-4 w-4" />
+        </a>
+      </li>
+    ))
+  }
+  <!-- Closing tile: fills out the grid and points to the form. -->
+  <li class="flex flex-col justify-between bg-dark p-6 text-white">
+    <div>
+      <h3 class="text-xl font-bold">Not sure what you need?</h3>
+      <p class="mt-2 leading-relaxed text-white/80">Tell us what's going on and we'll come take a look.</p>
+    </div>
+    <a
+      href="/quote/"
+      class="btn btn-primary-on-dark mt-5"
+    >
+      Get a free estimate
+      <Icon name="arrow-right" class="h-4 w-4" />
+    </a>
+  </li>
+</ul>

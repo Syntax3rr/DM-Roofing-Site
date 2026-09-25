@@ -1,0 +1,72 @@
+---
+/**
+ * Short FAQ using native <details>, plus FAQPage structured data.
+ * Every answer here is a fact the business has confirmed.
+ */
+import { siteConfig } from '../../config/site';
+import SectionHeading from '../common/SectionHeading.astro';
+
+const faqs = [
+  {
+    q: 'Do you charge for estimates?',
+    a: 'No. We come to your house, look at the job, and give you a price at no charge. You’re under no obligation to go ahead.',
+  },
+  {
+    q: 'What areas do you work in?',
+    a: `${siteConfig.serviceArea.towns.join(', ')}, and the surrounding area in the ${siteConfig.serviceArea.region}. If you’re not sure whether we come to you, send us a request and ask.`,
+  },
+  {
+    q: 'Do you guarantee your work?',
+    a: `Yes. All of our labour is guaranteed for ${siteConfig.stats.warrantyYears} years, on top of the manufacturer’s warranty on the products.`,
+  },
+  {
+    q: 'Are you insured?',
+    a: 'Yes, we’re fully insured on every job.',
+  },
+  {
+    q: 'Do you still do roofing?',
+    a: 'We do. Roofing is where we started in 2004. These days most of our work is windows, doors, siding, soffit, fascia, and eavestroughs, but we still take on roofs.',
+  },
+  {
+    q: 'What if I have an emergency?',
+    a: `We work year-round and take emergency calls. For anything urgent, call ${siteConfig.phone} instead of using the form.`,
+  },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ q, a }) => ({
+    '@type': 'Question',
+    name: q,
+    acceptedAnswer: { '@type': 'Answer', text: a },
+  })),
+};
+---
+
+<script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+<section id="faq" class="scroll-mt-20 border-t border-stone-200 py-16 md:py-24">
+  <div class="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1.6fr] lg:px-8">
+    <div>
+      <SectionHeading title="Common questions" />
+      <p class="mt-4 text-stone-600">
+        Something else? <a href="/quote/" class="font-semibold text-primary-ink hover:underline">Send us a request</a>
+        and ask. We'll answer it when we get back to you.
+      </p>
+    </div>
+    <div class="divide-y divide-stone-200 border-y border-stone-200">
+      {
+        faqs.map(({ q, a }) => (
+          <details class="group py-5">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-bold text-dark">
+              {q}
+              <span class="text-2xl font-normal text-primary-ink transition-transform group-open:rotate-45" aria-hidden="true">+</span>
+            </summary>
+            <p class="mt-3 max-w-2xl leading-relaxed text-stone-600">{a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>

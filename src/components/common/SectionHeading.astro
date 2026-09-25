@@ -1,0 +1,33 @@
+---
+/**
+ * Section heading: sentence-case title with an optional lead paragraph.
+ */
+interface Props {
+  title: string;
+  lead?: string;
+  /** Set true on dark section backgrounds. */
+  onDark?: boolean;
+  /** Heading level (defaults to h2). */
+  level?: 'h1' | 'h2' | 'h3';
+}
+
+const { title, lead, onDark = false, level: Tag = 'h2' } = Astro.props;
+---
+
+<div class="max-w-2xl">
+  <Tag
+    class:list={[
+      'font-heading text-3xl leading-tight md:text-4xl',
+      onDark ? 'text-white' : 'text-dark',
+    ]}
+  >
+    {title}
+  </Tag>
+  {
+    lead && (
+      <p class:list={['mt-3 text-lg leading-relaxed', onDark ? 'text-white/80' : 'text-stone-600']}>
+        {lead}
+      </p>
+    )
+  }
+</div>

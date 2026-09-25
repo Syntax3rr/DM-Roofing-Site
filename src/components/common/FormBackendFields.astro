@@ -1,0 +1,37 @@
+---
+/**
+ * Web3Forms hidden fields + spam honeypot. Include once inside every
+ * <form>.
+ *
+ *  - access_key: public by design; it only lets the form send email
+ *                to the address you registered it with.
+ *  - redirect:   absolute URL to the thank-you page (free plans must
+ *                redirect to the same domain the form is on).
+ *  - botcheck:   Web3Forms' honeypot. Bots tick it; submissions with
+ *                it checked are silently dropped.
+ */
+import { siteConfig } from '../../config/site';
+import { web3formsAccessKey } from '../../lib/forms';
+
+interface Props {
+  formName: string;
+}
+
+const { formName } = Astro.props;
+const thankYouUrl = new URL('/thank-you/', Astro.site).href;
+---
+
+<input type="hidden" name="access_key" value={web3formsAccessKey} />
+<input type="hidden" name="redirect" value={thankYouUrl} />
+<input type="hidden" name="subject" value={`New ${formName} request from ${siteConfig.name} website`} />
+<input type="hidden" name="from_name" value={`${siteConfig.name} Website`} />
+
+<input
+  type="checkbox"
+  name="botcheck"
+  class="hidden"
+  style="display: none;"
+  tabindex="-1"
+  autocomplete="off"
+  aria-hidden="true"
+/>

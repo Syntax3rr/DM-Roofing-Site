@@ -1,0 +1,100 @@
+---
+/**
+ * Services page: how a job works (stated once), then a section per
+ * service with its write-up. Each section has an id so the home page
+ * list can link straight to it.
+ */
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/common/PageHero.astro';
+import Button from '../../components/common/Button.astro';
+import FinalCTA from '../../components/sections/FinalCTA.astro';
+import { siteConfig } from '../../config/site';
+
+const services = await Promise.all(
+  (await getCollection('services'))
+    .sort((a, b) => a.data.order - b.data.order)
+    .map(async (entry) => ({ entry, Content: (await render(entry)).Content })),
+);
+
+const steps = [
+  'You send a request and we set up a time to come by.',
+  'We look at the job with you and go over options.',
+  'You get a free estimate. There’s no obligation.',
+  `If you go ahead, we do the work, clean up, and guarantee our labour for ${siteConfig.stats.warrantyYears} years.`,
+];
+---
+
+<BaseLayout
+  title="Services"
+  description="Windows, doors, siding, soffit, fascia, eavestroughs, gutter guard, skylights, and roofing in Niagara Falls, St. Catharines, and area."
+>
+  <PageHero
+    title="Services"
+    lead="Every job starts with a free estimate and ends with a 10-year guarantee on our labour."
+    crumbs={[{ label: 'Services' }]}
+  />
+
+  <section class="py-14 md:py-20">
+    <div class="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_2.2fr] lg:px-8">
+      <aside class="lg:sticky lg:top-28 lg:self-start">
+        <h2 class="text-lg font-bold text-dark">How it works</h2>
+        <ol class="mt-4 space-y-3 text-stone-600">
+          {
+            steps.map((step, i) => (
+              <li class="flex gap-3">
+                <span class="font-bold text-primary-ink">{i + 1}.</span>
+                <span>{step}</span>
+              </li>
+            ))
+          }
+        </ol>
+        <nav aria-label="Services on this page" class="mt-8 hidden border-t border-stone-200 pt-6 lg:block">
+          <ul class="space-y-1.5 text-sm">
+            {
+              services.map(({ entry }) => (
+                <li>
+                  <a href={`#${entry.id}`} class="text-stone-600 hover:text-primary-ink">
+                    {entry.data.title}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+      </aside>
+
+      <div class="divide-y divide-stone-200 border-y border-stone-200">
+        {
+          services.map(({ entry, Content }) => (
+            <article id={entry.id} class="scroll-mt-28 py-10 first:pt-8">
+              <h2 class="font-heading text-3xl text-dark">{entry.data.title}</h2>
+              <p class="mt-2 text-lg text-stone-600">{entry.data.excerpt}</p>
+              <div class="prose prose-stone mt-4 max-w-none">
+                <Content />
+              </div>
+              {entry.data.heroImage && (
+                <Image
+                  src={entry.data.heroImage}
+                  alt={entry.data.heroImageAlt ?? ''}
+                  widths={[480, 768, 1200]}
+                  sizes="(min-width: 1024px) 700px, 100vw"
+                  class="mt-6 aspect-[16/9] w-full rounded-sm object-cover"
+                />
+              )}
+              <div class="mt-6">
+                <Button href={`/quote/?service=${encodeURIComponent(entry.data.title)}`}>Get an estimate for {entry.data.title.toLowerCase()}</Button>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <FinalCTA
+    title="Not sure what your home needs?"
+    lead="Send us a request and describe what's going on. We'll come out, take a look, and tell you what we'd recommend."
+  />
+</BaseLayout>
