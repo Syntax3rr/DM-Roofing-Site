@@ -2,7 +2,7 @@
 /**
  * Free-estimate request form, used in the home hero and on /quote/.
  *
- *  - compact: fewer fields (no address) for the home hero.
+ *  - compact: shorter notes box for the home hero.
  *  - The service dropdown is preselected from ?service=<title> so links
  *    like "Get an estimate for windows" land with it already chosen.
  *  - The address field suggests Canadian addresses via Geoapify once a
@@ -32,7 +32,7 @@ const labelClass = 'mb-1.5 block text-sm font-semibold text-dark';
 const inputClass =
   'w-full rounded-sm border border-stone-300 bg-white px-3.5 py-2.5 text-dark placeholder:text-stone-400 focus:border-primary-ink focus:outline-none focus:ring-2 focus:ring-primary-ink/25';
 const req = '<span class="text-primary-ink" aria-hidden="true">*</span>';
-const geoapifyKey = siteConfig.geoapifyKey.startsWith('YOUR_') ? '' : siteConfig.geoapifyKey;
+const geoapifyKey = siteConfig.geoapifyKey;
 ---
 
 <form {...formAttributes(formName)} class="grid gap-4 sm:grid-cols-2" data-estimate-form>
@@ -56,42 +56,40 @@ const geoapifyKey = siteConfig.geoapifyKey.startsWith('YOUR_') ? '' : siteConfig
     <label for={id('phone')} class={labelClass}>Phone <Fragment set:html={req} /></label>
     <input id={id('phone')} name="phone" type="tel" required autocomplete="tel" class={inputClass} />
   </div>
-  <div class:list={[compact && 'sm:col-span-2']}>
-    <label for={id('email')} class={labelClass}>Email <Fragment set:html={req} /></label>
-    <input id={id('email')} name="email" type="email" required autocomplete="email" class={inputClass} />
+  <div>
+    <label for={id('email')} class={labelClass}>
+      Email <span class="font-normal text-stone-500">(optional)</span>
+    </label>
+    <input id={id('email')} name="email" type="email" autocomplete="email" class={inputClass} />
   </div>
-  {
-    !compact && (
-      <div data-address-field data-geoapify-key={geoapifyKey}>
-        <label for={id('address')} class={labelClass}>Property address <Fragment set:html={req} /></label>
-        <div class="relative">
-        <input
-          id={id('address')}
-          name="address"
-          type="text"
-          required
-          autocomplete="street-address"
-          class={inputClass}
-          role="combobox"
-          aria-autocomplete="list"
-          aria-expanded="false"
-          aria-controls={id('address-list')}
-        />
-        <ul
-          id={id('address-list')}
-          role="listbox"
-          class="absolute inset-x-0 top-full z-20 mt-1 hidden max-h-72 overflow-auto rounded-md border border-stone-300 bg-white py-1 shadow-lg"
-        ></ul>
-        </div>
-        {geoapifyKey && (
-          <p class="mt-1 text-xs text-stone-400">
-            Address search by <a href="https://www.geoapify.com/" class="underline">Geoapify</a> ·
-            © <a href="https://www.openstreetmap.org/copyright" class="underline">OpenStreetMap</a> contributors
-          </p>
-        )}
-      </div>
-    )
-  }
+  <div data-address-field data-geoapify-key={geoapifyKey}>
+    <label for={id('address')} class={labelClass}>Property address <Fragment set:html={req} /></label>
+    <div class="relative">
+    <input
+      id={id('address')}
+      name="address"
+      type="text"
+      required
+      autocomplete="street-address"
+      class={inputClass}
+      role="combobox"
+      aria-autocomplete="list"
+      aria-expanded="false"
+      aria-controls={id('address-list')}
+    />
+    <ul
+      id={id('address-list')}
+      role="listbox"
+      class="absolute inset-x-0 top-full z-20 mt-1 hidden max-h-72 overflow-auto rounded-md border border-stone-300 bg-white py-1 shadow-lg"
+    ></ul>
+    </div>
+    {geoapifyKey && (
+      <p class="mt-1 text-xs text-stone-400">
+        Address search by <a href="https://www.geoapify.com/" class="underline">Geoapify</a> ·
+        © <a href="https://www.openstreetmap.org/copyright" class="underline">OpenStreetMap</a> contributors
+      </p>
+    )}
+  </div>
   <div class="sm:col-span-2">
     <label for={id('notes')} class={labelClass}>
       Tell us about the job <span class="font-normal text-stone-500">(optional)</span>
@@ -236,4 +234,19 @@ const geoapifyKey = siteConfig.geoapifyKey.startsWith('YOUR_') ? '' : siteConfig
       if (match) select.value = match.value;
     });
   }
+
+  // ---- Email subject ------------------------------------------------
+  // Puts the service and address in the subject so leads can be sorted
+  // from the inbox. Without JS the generic subject from
+  // FormBackendFields is sent instead.
+  document.querySelectorAll<HTMLFormElement>('[data-estimate-form]').forEach((form) => {
+    form.addEventListener('submit', () => {
+      const subject = form.querySelector<HTMLInputElement>('input[name="subject"]');
+      if (!subject) return;
+      const data = new FormData(form);
+      const service = String(data.get('service') ?? '').trim();
+      const address = String(data.get('address') ?? '').trim();
+      subject.value = [`Estimate request: ${service}`, address].filter(Boolean).join(' – ');
+    });
+  });
 </script>

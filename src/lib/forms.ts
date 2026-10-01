@@ -16,3 +16,7 @@ export function formAttributes(formName: string): Record<string, string> {
 }
 
 export const web3formsAccessKey = siteConfig.web3formsAccessKey;
+
+if (!web3formsAccessKey) {
+  console.warn('[forms] PUBLIC_WEB3FORMS_KEY is not set; estimate forms will not send.');
+}

@@ -13,7 +13,7 @@ npm run build    # static site in dist/
 
 ## Where things live
 
-- `src/config/site.ts`: business details, service area, Web3Forms and Geoapify keys
+- `src/config/site.ts`: business details and service area
 - `src/content/services/`: one file per service
 - `src/content/reviews.json`: customer testimonials
 - `src/styles/global.css`: colours, fonts, and button styles
@@ -21,12 +21,17 @@ npm run build    # static site in dist/
 ## Forms and address search
 
 - Estimate requests are sent through [Web3Forms](https://web3forms.com).
-  Put the access key in `web3formsAccessKey`.
 - The address field suggests addresses via [Geoapify](https://www.geoapify.com).
-  Put the key in `geoapifyKey` and restrict it to the site's domain in the
-  Geoapify dashboard.
+  Restrict the key to the site's domain in the Geoapify dashboard.
 
-Both keys are meant to be public, so they're safe to commit.
+The keys are read from environment variables at build time, not committed:
+
+- Locally, copy `.env.example` to `.env` and fill in the values.
+- For deploys, add `PUBLIC_WEB3FORMS_KEY` and `PUBLIC_GEOAPIFY_KEY` as
+  repository secrets (Settings → Secrets and variables → Actions).
+
+Both keys still end up in the built pages, so this keeps them out of the
+repo, not out of view.
 
 ## Deploy
 

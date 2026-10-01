@@ -63,20 +63,21 @@ export const siteConfig = {
    * Lead form backend (Web3Forms)
    * ----------------------------------------------------------
    * Get a free access key at https://web3forms.com by entering the
-   * email address that should receive leads, then paste it below.
-   * The key is safe to commit: it can only send mail to that address.
+   * email address that should receive leads. Set it as
+   * PUBLIC_WEB3FORMS_KEY in .env locally and as a GitHub Actions
+   * secret for deploys. It can only send mail to that address.
    * -------------------------------------------------------- */
-  web3formsAccessKey: 'YOUR_ACCESS_KEY_HERE',
+  web3formsAccessKey: import.meta.env.PUBLIC_WEB3FORMS_KEY ?? '',
 
   /* ----------------------------------------------------------
    * Address autocomplete (Geoapify)
    * ----------------------------------------------------------
    * Free key at https://myprojects.geoapify.com (3,000 lookups/day).
-   * It ends up in the page, so in the Geoapify dashboard restrict it
-   * to your domain. Leave the placeholder and the address field just
-   * works as a normal text box.
+   * Set it as PUBLIC_GEOAPIFY_KEY, same as the Web3Forms key. It ends
+   * up in the page, so in the Geoapify dashboard restrict it to your
+   * domain. Without a key the address field is a normal text box.
    * -------------------------------------------------------- */
-  geoapifyKey: 'YOUR_GEOAPIFY_KEY_HERE',
+  geoapifyKey: import.meta.env.PUBLIC_GEOAPIFY_KEY ?? '',
 
   /* ----------------------------------------------------------
    * Trust badges (strip under the hero + footer)
