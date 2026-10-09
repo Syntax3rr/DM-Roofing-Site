@@ -15,16 +15,13 @@ npm run build    # static site in dist/
 
 - `src/config/site.ts`: business details and service area
 - `src/content/services/`: one file per service
-- `src/content/reviews.json`: customer testimonials
+- `src/content/reviews.json`: customer testimonials (`/review/` sends
+  customers to Google; copy good ones here by hand)
 - `src/styles/global.css`: colours, fonts, and button styles
 
 ## Forms and address search
 
 - Estimate requests are sent through [Web3Forms](https://web3forms.com).
-- Reviews from `/review/` are emailed the same way. Sending the form
-  agrees to the review being posted, but nothing goes up automatically:
-  add the ones you want to `src/content/reviews.json` (first name and
-  town only).
 - The address field suggests addresses via [Geoapify](https://www.geoapify.com).
   Restrict the key to the site's domain in the Geoapify dashboard.
 

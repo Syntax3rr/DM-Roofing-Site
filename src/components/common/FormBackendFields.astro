@@ -15,12 +15,10 @@ import { web3formsAccessKey } from '../../lib/forms';
 
 interface Props {
   formName: string;
-  /** Page to land on after sending. Defaults to the estimate thank-you page. */
-  redirectPath?: string;
 }
 
-const { formName, redirectPath = '/thank-you/' } = Astro.props;
-const thankYouUrl = new URL(redirectPath, Astro.site).href;
+const { formName } = Astro.props;
+const thankYouUrl = new URL('/thank-you/', Astro.site).href;
 ---
 
 <input type="hidden" name="access_key" value={web3formsAccessKey} />

@@ -27,7 +27,7 @@ export default defineConfig({
     mdx(),
     sitemap({
       // Keep noindex pages out of the sitemap.
-      filter: (page) => !/\/(thank-you|review-thanks|contact|about-us|testimonials)\//.test(page),
+      filter: (page) => !/\/(thank-you|contact|about-us|testimonials)\//.test(page),
     }),
   ],
   vite: {

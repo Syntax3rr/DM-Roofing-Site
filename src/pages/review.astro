@@ -1,18 +1,18 @@
 ---
 /**
- * Review submission page. Linked from the testimonials section; also
- * the link to send customers after a job.
+ * Review page. Sends customers to Google; Google's review form can't be
+ * embedded, so this is a link. Linked from the testimonials section, and
+ * a short address to text customers after a job.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/common/PageHero.astro';
 import Button from '../components/common/Button.astro';
-import ReviewForm from '../components/forms/ReviewForm.astro';
 import { siteConfig } from '../config/site';
 ---
 
 <BaseLayout
   title="Leave a Review"
-  description={`Had work done by ${siteConfig.name}? Tell us how it went.`}
+  description={`Had work done by ${siteConfig.name}? Leave us a review on Google.`}
 >
   <PageHero
     title="Leave a review"
@@ -25,22 +25,16 @@ import { siteConfig } from '../config/site';
       <div class="border-t-4 border-primary bg-white p-6 sm:p-8">
         <h2 class="text-xl font-bold text-dark">Review us on Google</h2>
         <p class="mt-2 text-stone-700">
-          This helps us the most. Google reviews are what people see when they look us up.
+          Google reviews are what people see when they look us up, so they help us the most.
         </p>
         <div class="mt-5">
           <Button href={siteConfig.googleReviewUrl} size="lg">Write a Google review</Button>
         </div>
       </div>
-
-      <div class="mt-8 border-t-4 border-stone-300 bg-white p-6 sm:p-8">
-        <h2 class="text-xl font-bold text-dark">Or send it to us here</h2>
-        <p class="mt-2 mb-6 text-stone-700">
-          No Google account? Fill this out instead. We may post it on this site.
-        </p>
-        <ReviewForm />
-      </div>
       <p class="mt-6 text-sm text-stone-600">
-        You can also leave a review on our
+        No Google account? Email your review to
+        <a href={`mailto:${siteConfig.email}`} class="font-semibold text-primary-ink hover:underline">{siteConfig.email}</a>
+        or leave one on our
         <a href={siteConfig.social.facebook} class="font-semibold text-primary-ink hover:underline">Facebook page</a>.
       </p>
     </div>
