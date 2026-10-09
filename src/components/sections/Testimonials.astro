@@ -1,10 +1,12 @@
 ---
 /**
  * Testimonials: the first one as a large pull quote, the rest in two
- * plain columns.
+ * plain columns. Reviews copied from Google are credited "Google
+ * review" with a link to the listing, since Google doesn't give a town.
  */
 import { getCollection } from 'astro:content';
 import SectionHeading from '../common/SectionHeading.astro';
+import { siteConfig } from '../../config/site';
 
 const [featured, ...rest] = await getCollection('reviews');
 ---
@@ -23,7 +25,12 @@ const [featured, ...rest] = await getCollection('reviews');
             “{featured.data.text}”
           </blockquote>
           <figcaption class="mt-4 text-stone-600">
-            <span class="font-semibold text-dark">{featured.data.author}</span>, {featured.data.city}
+            <span class="font-semibold text-dark">{featured.data.author}</span>,{' '}
+            {featured.data.source === 'google' ? (
+              <a href={siteConfig.googleListingUrl} class="hover:underline">Google review</a>
+            ) : (
+              featured.data.city
+            )}
           </figcaption>
         </figure>
       )
@@ -35,7 +42,12 @@ const [featured, ...rest] = await getCollection('reviews');
           <figure>
             <blockquote class="leading-relaxed text-stone-700">“{review.data.text}”</blockquote>
             <figcaption class="mt-3 text-sm text-stone-500">
-              <span class="font-semibold text-dark">{review.data.author}</span>, {review.data.city}
+              <span class="font-semibold text-dark">{review.data.author}</span>,{' '}
+              {review.data.source === 'google' ? (
+                <a href={siteConfig.googleListingUrl} class="hover:underline">Google review</a>
+              ) : (
+                review.data.city
+              )}
             </figcaption>
           </figure>
         ))

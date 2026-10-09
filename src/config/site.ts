@@ -61,6 +61,8 @@ export const siteConfig = {
 
   /** Google Business Profile "write a review" link (from "Ask for reviews"). */
   googleReviewUrl: 'https://g.page/r/CdQcH1i-4HE1EAI/review',
+  /** Google Maps listing, linked from testimonials copied from Google. */
+  googleListingUrl: 'https://maps.google.com/?cid=3851106264505326804',
 
   /* ----------------------------------------------------------
    * Lead form backend (Web3Forms)

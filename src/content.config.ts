@@ -23,12 +23,17 @@ const services = defineCollection({
 const reviews = defineCollection({
   loader: file('./src/content/reviews.json'),
   // Real testimonials only. No star ratings or dates are stored because
-  // the originals didn't have them — don't invent them.
-  schema: z.object({
-    author: z.string(),
-    city: z.string(),
-    text: z.string(),
-  }),
+  // the originals didn't have them — don't invent them. Reviews copied
+  // from Google set source: 'google' (Google doesn't show a town) and are
+  // credited with a link to the Google listing instead.
+  schema: z
+    .object({
+      author: z.string(),
+      city: z.string().optional(),
+      source: z.literal('google').optional(),
+      text: z.string(),
+    })
+    .refine((r) => r.city || r.source, { message: 'Give a city or a source' }),
 });
 
 export const collections = { services, reviews };
