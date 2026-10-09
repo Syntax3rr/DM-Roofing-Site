@@ -41,8 +41,8 @@ export const siteConfig = {
   serviceArea: {
     city: 'Niagara Falls',
     province: 'ON',
-    region: 'Niagara Peninsula',
-    /** Towns named in copy and structured data. */
+    region: 'Niagara Region',
+    /** Towns listed in structured data only; copy just says the region. */
     towns: ['Niagara Falls', 'St. Catharines'],
   },
 
@@ -108,7 +108,7 @@ export const siteConfig = {
     siteName: 'DM Roofing & Siding',
     defaultTitle: 'DM Roofing & Siding | Windows, Doors & Exteriors in Niagara Falls',
     defaultDescription:
-      'Windows, doors, siding, soffit, fascia, eavestroughs, and gutter guard in Niagara Falls, St. Catharines, and area. Locally owned, fully insured, in business since 2004. Call 905-341-9090 for a free estimate.',
+      'Windows, doors, siding, soffit, fascia, eavestroughs, and gutter guard in the Niagara Region. Locally owned, fully insured, in business since 2004. Call 905-341-9090 for a free estimate.',
     /** Path to the default Open Graph image (in /public). */
     ogImage: '/og-default.jpg',
   },
