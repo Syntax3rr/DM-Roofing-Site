@@ -1,0 +1,95 @@
+---
+/**
+ * Customer review form, used on /review/.
+ *
+ * Submissions are emailed through Web3Forms like estimate requests.
+ * Nothing is published automatically: to put a review on the site, add
+ * it to src/content/reviews.json (only if the "ok to post" box was
+ * ticked).
+ */
+import { getCollection } from 'astro:content';
+import FormBackendFields from '../common/FormBackendFields.astro';
+import { formAttributes } from '../../lib/forms';
+
+const services = (await getCollection('services')).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+const formName = 'review';
+const labelClass = 'mb-1.5 block text-sm font-semibold text-dark';
+const inputClass =
+  'w-full rounded-sm border border-stone-300 bg-white px-3.5 py-2.5 text-dark placeholder:text-stone-400 focus:border-primary-ink focus:outline-none focus:ring-2 focus:ring-primary-ink/25';
+const req = '<span class="text-primary-ink" aria-hidden="true">*</span>';
+---
+
+<form {...formAttributes(formName)} class="grid gap-4 sm:grid-cols-2" data-review-form>
+  <FormBackendFields formName={formName} redirectPath="/review-thanks/" />
+
+  <div>
+    <label for="r-name" class={labelClass}>Name <Fragment set:html={req} /></label>
+    <input id="r-name" name="name" type="text" required autocomplete="name" class={inputClass} />
+    <p class="mt-1 text-xs text-stone-500">We only post your first name.</p>
+  </div>
+  <div>
+    <label for="r-city" class={labelClass}>Town or city <Fragment set:html={req} /></label>
+    <input id="r-city" name="city" type="text" required autocomplete="address-level2" class={inputClass} />
+  </div>
+  <div>
+    <label for="r-email" class={labelClass}>
+      Email <span class="font-normal text-stone-500">(optional, not posted)</span>
+    </label>
+    <input id="r-email" name="email" type="email" autocomplete="email" class={inputClass} />
+  </div>
+  <div>
+    <label for="r-service" class={labelClass}>
+      What did we do for you? <span class="font-normal text-stone-500">(optional)</span>
+    </label>
+    <select id="r-service" name="service" class={inputClass}>
+      <option value="">Choose one…</option>
+      {services.map((s) => <option value={s.data.title}>{s.data.title}</option>)}
+      <option value="Other">Something else</option>
+    </select>
+  </div>
+  <div class="sm:col-span-2">
+    <label for="r-review" class={labelClass}>Your review <Fragment set:html={req} /></label>
+    <textarea id="r-review" name="review" rows="6" required minlength="20" class={inputClass}></textarea>
+  </div>
+  <div class="sm:col-span-2">
+    <label class="flex items-start gap-3 text-sm text-stone-700">
+      <input
+        type="checkbox"
+        name="ok_to_post"
+        value="Yes"
+        class="mt-0.5 h-4 w-4 shrink-0 accent-primary-ink"
+      />
+      <span>It's OK to post this review on the DM website with my first name and town.</span>
+    </label>
+  </div>
+
+  <div class="sm:col-span-2">
+    <button type="submit" class="btn btn-primary btn-lg btn-block">Send my review</button>
+  </div>
+</form>
+
+<script>
+  // Put the name and town in the subject so reviews stand out from
+  // estimate requests in the inbox. Unchecked boxes aren't sent, so
+  // add an explicit "No" for the posting permission.
+  document.querySelectorAll<HTMLFormElement>('[data-review-form]').forEach((form) => {
+    form.addEventListener('submit', () => {
+      const data = new FormData(form);
+      const subject = form.querySelector<HTMLInputElement>('input[name="subject"]');
+      if (subject) {
+        const who = [data.get('name'), data.get('city')].map((v) => String(v ?? '').trim()).filter(Boolean);
+        subject.value = `New review: ${who.join(', ')}`;
+      }
+      if (!data.get('ok_to_post')) {
+        const no = document.createElement('input');
+        no.type = 'hidden';
+        no.name = 'ok_to_post';
+        no.value = 'No';
+        form.append(no);
+      }
+    });
+  });
+</script>

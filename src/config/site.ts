@@ -59,6 +59,9 @@ export const siteConfig = {
     facebook: 'https://www.facebook.com/DM-roofing-siding-801417083281078/',
   },
 
+  /** Google Business Profile "write a review" link (from "Ask for reviews"). */
+  googleReviewUrl: 'https://g.page/r/CdQcH1i-4HE1EAI/review',
+
   /* ----------------------------------------------------------
    * Lead form backend (Web3Forms)
    * ----------------------------------------------------------

@@ -1,0 +1,48 @@
+---
+/**
+ * Review submission page. Linked from the testimonials section; also
+ * the link to send customers after a job.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/common/PageHero.astro';
+import Button from '../components/common/Button.astro';
+import ReviewForm from '../components/forms/ReviewForm.astro';
+import { siteConfig } from '../config/site';
+---
+
+<BaseLayout
+  title="Leave a Review"
+  description={`Had work done by ${siteConfig.name}? Tell us how it went.`}
+>
+  <PageHero
+    title="Leave a review"
+    lead="Had work done by us? Tell us how it went."
+    crumbs={[{ label: 'Leave a review' }]}
+  />
+
+  <section class="bg-surface py-14 md:py-20">
+    <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+      <div class="border-t-4 border-primary bg-white p-6 sm:p-8">
+        <h2 class="text-xl font-bold text-dark">Review us on Google</h2>
+        <p class="mt-2 text-stone-700">
+          This helps us the most. Google reviews are what people see when they look us up.
+        </p>
+        <div class="mt-5">
+          <Button href={siteConfig.googleReviewUrl} size="lg">Write a Google review</Button>
+        </div>
+      </div>
+
+      <div class="mt-8 border-t-4 border-stone-300 bg-white p-6 sm:p-8">
+        <h2 class="text-xl font-bold text-dark">Or send it to us here</h2>
+        <p class="mt-2 mb-6 text-stone-700">
+          No Google account? Fill this out instead. With your OK, we may post it on this site.
+        </p>
+        <ReviewForm />
+      </div>
+      <p class="mt-6 text-sm text-stone-600">
+        You can also leave a review on our
+        <a href={siteConfig.social.facebook} class="font-semibold text-primary-ink hover:underline">Facebook page</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

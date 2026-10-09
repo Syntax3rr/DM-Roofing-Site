@@ -21,6 +21,9 @@ npm run build    # static site in dist/
 ## Forms and address search
 
 - Estimate requests are sent through [Web3Forms](https://web3forms.com).
+- Reviews from `/review/` are emailed the same way. They aren't posted
+  automatically: if the email says "ok_to_post: Yes", add the review to
+  `src/content/reviews.json` (first name and town only).
 - The address field suggests addresses via [Geoapify](https://www.geoapify.com).
   Restrict the key to the site's domain in the Geoapify dashboard.
 
